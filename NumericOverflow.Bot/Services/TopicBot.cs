@@ -52,7 +52,24 @@ namespace NumericOverflow.Bot.Services
 
 		public override void PipeOut(BotRequest botRequest, ref bool nextPipe)
 		{
-			throw new NotImplementedException();
+			var stepState = this.GetCurrentState(botRequest.DialogState);
+			if (stepState.CurrentStatus == TopicStepState.Status.FindTopicParameter)
+			{
+				var topicParameter = botRequest.Bag as TopicParameter;
+				if (topicParameter != null)
+				{
+					if (! stepState.ResolvedParameters.Select(p => p.Id).Contains(topicParameter.Id) &&
+						 stepState.TopicParameters.Select(p => p.Id).Contains(topicParameter.Id))
+					{
+						stepState.ResolvedParameters.Add(topicParameter);
+						stepState.ErrorCount = 0;
+					}
+				}
+				else
+				{
+					this.AddError(botRequest);
+				}
+			}
 		}
 
 		public virtual void GetDefaultResponseFor(BotRequest botRequest)

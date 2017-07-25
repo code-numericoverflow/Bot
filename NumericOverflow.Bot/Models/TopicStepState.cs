@@ -17,6 +17,8 @@ namespace NumericOverflow.Bot.Models
 
 		public TopicStepState() : base(typeof(TopicBot), 0, 3)
 		{
+			this.TopicParameters = new List<TopicParameter>();
+			this.ResolvedParameters = new List<TopicParameter>();
 		}
 
 		public Status CurrentStatus { get; set; }

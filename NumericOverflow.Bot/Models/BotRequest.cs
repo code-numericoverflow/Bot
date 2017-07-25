@@ -16,6 +16,6 @@ namespace NumericOverflow.Bot.Models
 		public DialogState DialogState { get; set; }
 		public string OutText { get; set; }
 		public List<ChoiceItem> Choices { get; set; }
-		public string Bag { get; set; }
+		public object Bag { get; set; }
 	}
 }

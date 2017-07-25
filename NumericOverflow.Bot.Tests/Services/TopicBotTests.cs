@@ -86,6 +86,31 @@ namespace NumericOverflow.Bot.Tests.Services
 			Assert.AreEqual("", topicStepState.CurrentTopicInput);
 		}
 
+		[TestMethod]
+		public void ShouldAddErrorWhenFindTopicParameterWithNoTopicParameterInBag()
+		{
+			var botRequest = this.GetDefaultTopicBotRequest(TopicStepState.Status.FindTopicParameter, 0);
+			botRequest.Bag = null;
+
+			SUT.PipeOut(botRequest, ref this.NoNextPipe);
+
+			Assert.AreEqual(1, botRequest.DialogState.CurrentState.ErrorCount);
+		}
+
+		[TestMethod]
+		public void ShouldResolveParameterWhenFindTopicParameterWithTopicParameterInBag()
+		{
+			var botRequest = this.GetDefaultTopicBotRequest(TopicStepState.Status.FindTopicParameter, 0);
+			var topicStepState = botRequest.DialogState.GetLastStep() as TopicStepState;
+			topicStepState.TopicParameters.Add(this.GetSampleParameter("1"));
+			botRequest.Bag = this.GetSampleParameter("1");
+
+			SUT.PipeOut(botRequest, ref this.NoNextPipe);
+
+			Assert.AreEqual(0, topicStepState.ErrorCount);
+			Assert.AreEqual(1, topicStepState.ResolvedParameters.Count);
+		}
+
 		private BotRequest GetDefaultTopicBotRequest(TopicStepState.Status status, int errorCount)
 		{
 			var step = new TopicStepState()
@@ -109,6 +134,11 @@ namespace NumericOverflow.Bot.Tests.Services
 					new Topic(i.ToString(), i.ToString(), i.ToString()),
 					100 - i);
 			}
+		}
+
+		private TopicParameter GetSampleParameter(string id)
+		{
+			return new TopicParameter(typeof(DateTime), "1", "", "", false, DateTime.Today, DateTime.Today);
 		}
 	}
 }
