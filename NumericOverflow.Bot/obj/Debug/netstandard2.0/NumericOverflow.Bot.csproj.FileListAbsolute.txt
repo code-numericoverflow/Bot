@@ -1,0 +1,8 @@
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\bin\Debug\netstandard2.0\NumericOverflow.Bot.deps.json
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\bin\Debug\netstandard2.0\NumericOverflow.Bot.dll
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\bin\Debug\netstandard2.0\NumericOverflow.Bot.pdb
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\obj\Debug\netstandard2.0\NumericOverflow.Bot.csprojResolveAssemblyReference.cache
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\obj\Debug\netstandard2.0\NumericOverflow.Bot.csproj.CoreCompileInputs.cache
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\obj\Debug\netstandard2.0\NumericOverflow.Bot.AssemblyInfo.cs
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\obj\Debug\netstandard2.0\NumericOverflow.Bot.dll
+C:\Fernando\Copia Casa\Dev\Bot\NumericOverflow.Bot\obj\Debug\netstandard2.0\NumericOverflow.Bot.pdb
