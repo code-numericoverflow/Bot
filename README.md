@@ -1,2 +1,5 @@
 # Bot
-Bot proof of concept
+Bot proof of concept.
+
+## Todo
+Async
