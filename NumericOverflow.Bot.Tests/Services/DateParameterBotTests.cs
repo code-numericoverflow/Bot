@@ -79,7 +79,7 @@ namespace NumericOverflow.Bot.Tests.Services
 		}
 
 		[TestMethod]
-		public void ShouldParseParameterWhenYsterday()
+		public void ShouldParseParameterWhenYesterday()
 		{
 			var botRequest = this.GetDefaultRequest();
 			botRequest.InputText = "Yesterday";
