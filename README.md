@@ -1,2 +1,2 @@
 # Bot
-Bot Sample
+Bot proof of concept
