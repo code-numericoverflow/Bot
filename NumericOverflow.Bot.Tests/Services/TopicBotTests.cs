@@ -17,16 +17,24 @@ namespace NumericOverflow.Bot.Tests.Services
 	public class TopicBotTests
 	{
 		private bool NoNextPipe = false;
+		private ITopicIndexer TopicIndexer { get; set; }
+		private ITopicParameterRepository TopicParameterRepository { get; set; }
+		private IBot SUT { get; set; }
+
+		public TopicBotTests()
+		{
+			this.TopicIndexer = A.Fake<ITopicIndexer>();
+			this.TopicParameterRepository = A.Fake<ITopicParameterRepository>();
+			this.SUT = new TopicBot(this.TopicIndexer, this.TopicParameterRepository);
+		}
 
 		[TestMethod]
 		public void ShouldRespondWithInitialResponseWhenInitialStatus()
 		{
-			var topicIndexer = A.Fake<ITopicIndexer>();
-			IBot sut = new TopicBot(topicIndexer, null);
 			var botRequest = this.GetDefaultTopicBotRequest(TopicStepState.Status.Initialized, 1);
 			botRequest.InputText = "A";
 
-			sut.PipeIn(botRequest, ref this.NoNextPipe);
+			SUT.PipeIn(botRequest, ref this.NoNextPipe);
 
 			var topicStepState = botRequest.DialogState.GetLastStep() as TopicStepState;
 			Assert.AreEqual(TopicStepState.Status.FindTopic, topicStepState.CurrentStatus);
@@ -37,12 +45,10 @@ namespace NumericOverflow.Bot.Tests.Services
 		[TestMethod]
 		public void ShouldRespondWithErrorWhenNoTopicIsIndexed()
 		{
-			var topicIndexer = A.Fake<ITopicIndexer>();
-			IBot sut = new TopicBot(topicIndexer, null);
 			var botRequest = this.GetDefaultTopicBotRequest(TopicStepState.Status.FindTopic, 0);
 			botRequest.InputText = "A";
 
-			sut.PipeIn(botRequest, ref this.NoNextPipe);
+			SUT.PipeIn(botRequest, ref this.NoNextPipe);
 
 			var topicStepState = botRequest.DialogState.GetLastStep() as TopicStepState;
 			Assert.AreEqual(TopicStepState.Status.FindTopic, topicStepState.CurrentStatus);
@@ -53,13 +59,11 @@ namespace NumericOverflow.Bot.Tests.Services
 		[TestMethod]
 		public void ShouldRespondWithSelectionWhenOnlyOneTopicIsIndexed()
 		{
-			var topicIndexer = A.Fake<ITopicIndexer>();
-			A.CallTo(() => topicIndexer.GetBestScoredTopicsFor("A")).Returns(this.GetFakeIndexedTopics(1));
-			IBot sut = new TopicBot(topicIndexer, A.Fake<ITopicParameterRepository>());
+			A.CallTo(() => this.TopicIndexer.GetBestScoredTopicsFor("A")).Returns(this.GetFakeIndexedTopics(1));
 			var botRequest = this.GetDefaultTopicBotRequest(TopicStepState.Status.FindTopic, 0);
 			botRequest.InputText = "A";
 
-			sut.PipeIn(botRequest, ref this.NoNextPipe);
+			SUT.PipeIn(botRequest, ref this.NoNextPipe);
 
 			var topicStepState = botRequest.DialogState.GetLastStep() as TopicStepState;
 			Assert.AreEqual(TopicStepState.Status.FindTopicParameter, topicStepState.CurrentStatus);
@@ -70,13 +74,11 @@ namespace NumericOverflow.Bot.Tests.Services
 		[TestMethod]
 		public void ShouldRespondWithChoicesWhenTwoOrMoreTopicsAreIndexed()
 		{
-			var topicIndexer = A.Fake<ITopicIndexer>();
-			A.CallTo(() => topicIndexer.GetBestScoredTopicsFor("A")).Returns(this.GetFakeIndexedTopics(3));
-			IBot sut = new TopicBot(topicIndexer, null);
+			A.CallTo(() => this.TopicIndexer.GetBestScoredTopicsFor("A")).Returns(this.GetFakeIndexedTopics(3));
 			var botRequest = this.GetDefaultTopicBotRequest(TopicStepState.Status.FindTopic, 0);
 			botRequest.InputText = "A";
 
-			sut.PipeIn(botRequest, ref this.NoNextPipe);
+			SUT.PipeIn(botRequest, ref this.NoNextPipe);
 
 			var topicStepState = botRequest.DialogState.GetLastStep() as TopicStepState;
 			Assert.AreEqual(TopicStepState.Status.FindTopic, topicStepState.CurrentStatus);
