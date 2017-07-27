@@ -64,6 +64,7 @@ namespace NumericOverflow.Bot.Services
 						stepState.ResolvedParameters.Add(topicParameter);
 						stepState.ErrorCount = 0;
 					}
+					this.ResolveParameters(botRequest);
 				}
 				else
 				{
@@ -138,20 +139,29 @@ namespace NumericOverflow.Bot.Services
 			if (parameterToResolve == null)
 			{
 				// We have all the parameters => Run response
+				botRequest.OutText = this.GetCompletedText(botRequest);
+				currentState.CurrentStatus = TopicStepState.Status.Initialized;
 			}
 			else
 			{
-				this.ResolveParameter(parameterToResolve, botRequest);
+				this.RedirectToParameter(parameterToResolve, botRequest);
 			}
 		}
 
-		public virtual void ResolveParameter(TopicParameter parameterToResolve, BotRequest botRequest)
+		public virtual void RedirectToParameter(TopicParameter parameterToResolve, BotRequest botRequest)
 		{
 			if (parameterToResolve.Type == typeof(DateTime))
 			{
 				var currentState = GetCurrentState(botRequest.DialogState);
 				this.OnRedirect(new DateParameterState() { Id = parameterToResolve.Id, Context = currentState.CurrentTopicInput }, botRequest);
 			}
+		}
+
+		private string GetCompletedText(BotRequest botRequest)
+		{
+			var currentState = GetCurrentState(botRequest.DialogState);
+			string parameters = string.Join("\r\n", currentState.ResolvedParameters.Select(p => p.Id + "=" + p.Value.ToString()));
+			return "Selected topic: " + currentState.CurrentTopicId + "\r\n" + parameters;
 		}
 	}
 }

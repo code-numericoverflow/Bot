@@ -51,6 +51,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\FakeModelsHelper.cs" />
     <Compile Include="Services\DateParameterBotTests.cs" />
     <Compile Include="Services\IntegrationTests.cs" />
     <Compile Include="Services\MenuBotTests.cs" />

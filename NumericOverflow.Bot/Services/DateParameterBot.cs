@@ -40,7 +40,7 @@ namespace NumericOverflow.Bot.Services
 			var currentState = botRequest.DialogState.CurrentState as DateParameterState;
 			currentState.Value = value;
 			currentState.ErrorCount = 0;
-			botRequest.Bag = currentState.Id + "=" + value.ToString() + ";";
+			botRequest.Bag = new TopicParameter(typeof(DateTime), currentState.Id, "date", "date", false, value, value);
 			this.OnFinalize(botRequest);
 		}
 	}

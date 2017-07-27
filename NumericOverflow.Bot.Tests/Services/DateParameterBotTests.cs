@@ -79,14 +79,15 @@ namespace NumericOverflow.Bot.Tests.Services
 		}
 
 		[TestMethod]
-		public void ShouldParseParameterWhenYesterday()
+		public void ShoulFillBagWithSelectedValueWhenYesterday()
 		{
 			var botRequest = this.GetDefaultRequest();
 			botRequest.InputText = "Yesterday";
 
 			this.SUT.PipeIn(botRequest, ref this.TrueNextPipe);
 
-			Assert.AreEqual("PARAMETER1=" + DateTime.Today.AddDays(-1).ToString() + ";", botRequest.Bag);
+			var topicParameter = botRequest.Bag as TopicParameter;
+			Assert.AreEqual(DateTime.Today.AddDays(-1), topicParameter.Value);
 		}
 
 		private BotRequest GetDefaultRequest()
