@@ -16,13 +16,16 @@ namespace NumericOverflow.Bot.Tests.Services
 		private bool NoNextPipe = false;
 		private ITopicIndexer TopicIndexer { get; set; }
 		private ITopicParameterRepository TopicParameterRepository { get; set; }
+		private IDialogTextRepository DialogTextRepository { get; set; }
 		private IBot SUT { get; set; }
 
 		public TopicBotTests()
 		{
 			this.TopicIndexer = A.Fake<ITopicIndexer>();
+			this.DialogTextRepository = A.Fake<IDialogTextRepository>();
 			this.TopicParameterRepository = A.Fake<ITopicParameterRepository>();
-			this.SUT = new TopicBot(this.TopicIndexer, this.TopicParameterRepository);
+			this.DialogTextRepository = A.Fake<IDialogTextRepository>();
+			this.SUT = new TopicBot(this.TopicIndexer, this.TopicParameterRepository, this.DialogTextRepository);
 		}
 
 		[TestMethod]

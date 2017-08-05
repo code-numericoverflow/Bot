@@ -8,11 +8,11 @@ namespace NumericOverflow.Bot.Models
 {
     public class TopicStepState : DialogStepState
     {
-		public enum Status
+		public enum Status : int
 		{
-			Initialized,
-			FindTopic,
-			FindTopicParameter,
+			Initialized = 0,
+			FindTopic = 1,
+			FindTopicParameter = 2,
 		}
 
 		public TopicStepState() : base(typeof(TopicBot), 0, 3)

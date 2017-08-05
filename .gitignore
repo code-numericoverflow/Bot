@@ -9,3 +9,7 @@
 /NumericOverflow.Bot/*.user
 /NumericOverflow.Bot.Tests/obj
 /NumericOverflow.Bot.Tests/bin
+/NumericOverflow.Bot.Sample/obj
+/NumericOverflow.Bot.Sample/bin
+/NumericOverflow.Bot.Indexers/obj
+/NumericOverflow.Bot.Indexers/bin

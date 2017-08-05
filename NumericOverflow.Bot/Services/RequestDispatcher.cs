@@ -13,6 +13,8 @@ namespace NumericOverflow.Bot.Services
 			this.Resolver = resolver;
 		}
 
+		public event FinalizingEventHandler Finalizing;
+
 		public virtual void Dispatch(BotRequest botRequest)
 		{
 			var steps = botRequest.DialogState.GetSteps().ToArray();
@@ -37,14 +39,16 @@ namespace NumericOverflow.Bot.Services
 				}
 
 				nextIndex++;
-				previousStep = botRequest.DialogState.CurrentState;
+				botRequest.DialogState.PreviousState = null;
+				botRequest.DialogState.CurrentState = null;
+				botRequest.DialogState.NextState = null;
 			}
 		}
 
 		private void Pipe(BotRequest botRequest, ref bool nextPipe, bool input)
 		{
 			var currentStep = botRequest.DialogState.CurrentState;
-			var bot = this.Resolver.Resolve(currentStep.BotType) as IBot;
+			var bot = this.Resolver.Resolve(System.Type.GetType(currentStep.BotTypeQualifiedName)) as IBot;
 			bot.Redirected += Bot_Redirected;
 			bot.Finalized += Bot_Finalized;
 			bot.ErrorCompleted += Bot_ErrorCompleted;
@@ -71,6 +75,10 @@ namespace NumericOverflow.Bot.Services
 
 		private void Bot_Finalized(IBot sender, FinalizedEventArgs e)
 		{
+			if (this.Finalizing != null)
+			{
+				this.Finalizing.Invoke(sender, e);
+			}
 			this.RemoveFromDialog(e.BotRequest.DialogState.CurrentState, e.BotRequest);
 		}
 

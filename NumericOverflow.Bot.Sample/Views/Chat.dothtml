@@ -1,0 +1,26 @@
+@viewModel NumericOverflow.Bot.Sample.ViewModels.Chat, NumericOverflow.Bot.Sample
+
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+
+	<dot:Repeater DataSource="{value: ChatItems}" WrapperTagName="ul">
+		<ItemTemplate>
+			<li>{{value: Text}}</li>
+		</ItemTemplate>
+	</dot:Repeater>
+	<dot:Repeater DataSource="{value: ChoiceItems}">
+		<ItemTemplate>
+			<dot:Button Click="{command: _root.ChoiceSelected(_this)}" Text="{value: Description}" />
+		</ItemTemplate>
+	</dot:Repeater>
+	<dot:TextBox Text="{value: InputText}" />
+	<dot:Button Click="{command: Submit()}" Text="Enviar" />
+
+</body>
+</html>

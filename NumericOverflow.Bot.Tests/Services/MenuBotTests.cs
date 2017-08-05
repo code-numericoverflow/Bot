@@ -80,7 +80,7 @@ namespace NumericOverflow.Bot.Tests.Services
 		[TestMethod]
 		public void ShouldNotRespondWhenNextBot()
 		{
-			this.BotRequest.DialogState.NextState = new DialogStepState(null) ;
+			this.BotRequest.DialogState.NextState = new DialogStepState(this.GetType()) ;
 
 			SUT.PipeIn(this.BotRequest, ref this.NextPipe);
 

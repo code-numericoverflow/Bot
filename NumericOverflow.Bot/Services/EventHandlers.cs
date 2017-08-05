@@ -30,6 +30,17 @@ namespace NumericOverflow.Bot.Services
 	}
 	public delegate void FinalizedEventHandler(IBot sender, FinalizedEventArgs e);
 
+	public class FinalizingEventArgs : EventArgs
+	{
+		public BotRequest BotRequest { get; private set; }
+
+		public FinalizingEventArgs(BotRequest botRequest)
+		{
+			this.BotRequest = botRequest;
+		}
+	}
+	public delegate void FinalizingEventHandler(IBot sender, FinalizedEventArgs e);
+
 	public class ErrorCompletedEventArgs : EventArgs
 	{
 		public BotRequest BotRequest { get; private set; }

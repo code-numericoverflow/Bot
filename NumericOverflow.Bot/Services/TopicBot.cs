@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
 using NumericOverflow.Bot.Models;
 using NumericOverflow.Bot.Data;
 
@@ -12,11 +11,13 @@ namespace NumericOverflow.Bot.Services
 
 		private ITopicIndexer TopicIndexer { get; set; }
 		private ITopicParameterRepository TopicParameterRepository { get; set; }
+		private IDialogTextRepository DialogTextRepository { get; set; }
 
-		public TopicBot(ITopicIndexer topicIndexer, ITopicParameterRepository topicParameterRepository)
+		public TopicBot(ITopicIndexer topicIndexer, ITopicParameterRepository topicParameterRepository, IDialogTextRepository dialogTextRepository)
 		{
 			this.TopicIndexer = topicIndexer;
 			this.TopicParameterRepository = topicParameterRepository;
+			this.DialogTextRepository = dialogTextRepository;
 		}
 
 		public override void PipeIn(BotRequest botRequest, ref bool nextPipe)
@@ -85,14 +86,16 @@ namespace NumericOverflow.Bot.Services
 			var currentState = GetCurrentState(botRequest.DialogState);
 			currentState.CurrentStatus = TopicStepState.Status.FindTopic;
 			currentState.ErrorCount = 0;
-			botRequest.OutText = "Dime qué listado quieres";
+			botRequest.OutText = this.DialogTextRepository.GetDialogTextFor("Bot Presentation") + "\r\n" +
+				this.DialogTextRepository.GetDialogTextFor("Select Topic");
 		}
 
 		public virtual void GetErrorResponseFor(BotRequest botRequest)
 		{
 			var currentState = GetCurrentState(botRequest.DialogState);
 			currentState.ErrorCount++;
-			botRequest.OutText = "Dime qué listado quieres";
+			botRequest.OutText = this.DialogTextRepository.GetDialogTextFor("Unknown Topic") + "\r\n" +
+				this.DialogTextRepository.GetDialogTextFor("Select Topic");
 		}
 
 		public virtual void GetTopicSelectedResponseFor(BotRequest botRequest, Topic topic)
@@ -104,7 +107,7 @@ namespace NumericOverflow.Bot.Services
 			currentState.CurrentStatus = TopicStepState.Status.FindTopicParameter;
 			currentState.TopicParameters = this.GetParametersFor(currentState.CurrentTopicId).ToList();
 			currentState.ResolvedParameters = new List<TopicParameter>();
-			botRequest.OutText = "Se ha seleccionado el tópico: " + topic.Title;
+			botRequest.OutText = string.Format(this.DialogTextRepository.GetDialogTextFor("Topic Selected"), topic.Title);
 			this.ResolveParameters(botRequest);
 		}
 
@@ -113,7 +116,7 @@ namespace NumericOverflow.Bot.Services
 			var currentState = GetCurrentState(botRequest.DialogState);
 			currentState.ErrorCount = 0;
 			currentState.CurrentStatus = TopicStepState.Status.FindTopic;
-			botRequest.OutText = "Seleccionar de la lista";
+			botRequest.OutText = this.DialogTextRepository.GetDialogTextFor("Select Choice");
 			botRequest.Choices = this.GetChoicesFor(topics).ToList();
 		}
 
@@ -141,6 +144,7 @@ namespace NumericOverflow.Bot.Services
 				// We have all the parameters => Run response
 				botRequest.OutText = this.GetCompletedText(botRequest);
 				currentState.CurrentStatus = TopicStepState.Status.Initialized;
+				this.OnFinalize(botRequest);
 			}
 			else
 			{
@@ -157,11 +161,11 @@ namespace NumericOverflow.Bot.Services
 			}
 		}
 
-		private string GetCompletedText(BotRequest botRequest)
+		public virtual string GetCompletedText(BotRequest botRequest)
 		{
 			var currentState = GetCurrentState(botRequest.DialogState);
 			string parameters = string.Join("\r\n", currentState.ResolvedParameters.Select(p => p.Id + "=" + p.Value.ToString()));
-			return "Selected topic: " + currentState.CurrentTopicId + "\r\n" + parameters;
+			return string.Format(this.DialogTextRepository.GetDialogTextFor("Topic Completed {0} {1}"), currentState.CurrentTopicId, parameters);
 		}
 	}
 }

@@ -11,5 +11,6 @@ namespace NumericOverflow.Bot.Services
 		void Dispatch(BotRequest botRequest);
 		void AddToDialog(DialogStepState step, BotRequest botRequest);
 		void RemoveFromDialog(DialogStepState step, BotRequest botRequest);
-    }
+		event FinalizingEventHandler Finalizing;
+	}
 }

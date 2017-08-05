@@ -7,7 +7,7 @@ namespace NumericOverflow.Bot.Models
 {
     public class DialogState
     {
-		private List<DialogStepState> Steps { get; set; }
+		public List<DialogStepState> Steps { get; set; }
 		// To be set by the dispatcher
 		public DialogStepState CurrentState { get; set; }
 		public DialogStepState PreviousState { get; set; }

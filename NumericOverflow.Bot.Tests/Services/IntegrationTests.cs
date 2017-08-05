@@ -19,16 +19,18 @@ namespace NumericOverflow.Bot.Tests.Services
 		private IRequestDispatcher RequestDispatcher { get; set; }
 		private ITopicIndexer TopicIndexer { get; set; }
 		private ITopicParameterRepository TopicParameterRepository { get; set; }
+		private IDialogTextRepository DialogTextRepository { get; set; }
 
 		public IntegrationTests()
 		{
 			this.TopicIndexer = A.Fake<ITopicIndexer>();
 			this.TopicParameterRepository = A.Fake<ITopicParameterRepository>();
+			this.DialogTextRepository = A.Fake<IDialogTextRepository>();
 			this.Resolver = A.Fake<IResolver>();
 			A.CallTo(() => this.Resolver.Resolve(typeof(FirstMenu))).Returns(new FirstMenu());
 			A.CallTo(() => this.Resolver.Resolve(typeof(SecondMenu))).Returns(new SecondMenu());
 			A.CallTo(() => this.Resolver.Resolve(typeof(DateParameterBot))).Returns(new DateParameterBot());
-			A.CallTo(() => this.Resolver.Resolve(typeof(TopicBot))).Returns(new TopicBot(this.TopicIndexer, this.TopicParameterRepository));
+			A.CallTo(() => this.Resolver.Resolve(typeof(TopicBot))).Returns(new TopicBot(this.TopicIndexer, this.TopicParameterRepository, this.DialogTextRepository));
 			this.RequestDispatcher = new RequestDispatcher(this.Resolver);
 		}
 
@@ -104,7 +106,7 @@ namespace NumericOverflow.Bot.Tests.Services
 
 			var topicParameter = botRequest.Bag as TopicParameter;
 			Assert.AreEqual(DateTime.Today.AddDays(-1), topicParameter.Value);
-			Assert.AreEqual(1, botRequest.DialogState.GetSteps().Count());
+			Assert.AreEqual(0, botRequest.DialogState.GetSteps().Count());
 		}
 
 		[TestMethod]
@@ -117,6 +119,15 @@ namespace NumericOverflow.Bot.Tests.Services
 			var topicStepState = new TopicStepState();
 			state.AddStep(topicStepState);
 			var botRequest = new BotRequest(state);
+			List<TopicParameter> resolvedParameters = null;
+			this.RequestDispatcher.Finalizing += (sender, args) => 
+			{
+				if (sender.GetType() == typeof(TopicBot))
+				{
+					var currentState = args.BotRequest.DialogState.CurrentState as TopicStepState;
+					resolvedParameters = currentState.ResolvedParameters;
+				}
+			};
 
 			botRequest.InputText = "";
 			this.RequestDispatcher.Dispatch(botRequest);
@@ -131,8 +142,10 @@ namespace NumericOverflow.Bot.Tests.Services
 
 			Assert.AreEqual(DateTime.Today.AddDays(-1), firstTopicParameter.Value);
 			Assert.AreEqual(DateTime.Today.AddDays(1), secondTopicParameter.Value);
-			Assert.AreEqual(1, botRequest.DialogState.GetSteps().Count());
+			Assert.AreEqual(0, botRequest.DialogState.GetSteps().Count());
+			Assert.AreEqual(2, resolvedParameters.Count());
 		}
+
 
 		private class FirstMenu : MenuBot
 		{
