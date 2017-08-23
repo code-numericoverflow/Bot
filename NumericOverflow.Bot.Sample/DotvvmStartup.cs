@@ -1,5 +1,6 @@
 using DotVVM.Framework;
 using DotVVM.Framework.Configuration;
+using DotVVM.Framework.ResourceManagement;
 using DotVVM.Framework.Routing;
 
 namespace NumericOverflow.Bot.Sample
@@ -30,7 +31,10 @@ namespace NumericOverflow.Bot.Sample
 
         private void ConfigureResources(DotvvmConfiguration config, string applicationPath)
         {
-            // register custom resources and adjust paths to the built-in resources
-        }
-    }
+			config.Resources.Register("chat", new StylesheetResource()
+			{
+				Location = new UrlResourceLocation("~/css/chat.css")
+			});
+		}
+	}
 }

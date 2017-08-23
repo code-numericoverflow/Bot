@@ -10,12 +10,14 @@ namespace NumericOverflow.Bot.Services
 	{
 
 		private ITopicIndexer TopicIndexer { get; set; }
+		private ITopicRepository TopicRepository { get; set; }
 		private ITopicParameterRepository TopicParameterRepository { get; set; }
 		private IDialogTextRepository DialogTextRepository { get; set; }
 
-		public TopicBot(ITopicIndexer topicIndexer, ITopicParameterRepository topicParameterRepository, IDialogTextRepository dialogTextRepository)
+		public TopicBot(ITopicIndexer topicIndexer, ITopicParameterRepository topicParameterRepository, IDialogTextRepository dialogTextRepository, ITopicRepository topicRepository)
 		{
 			this.TopicIndexer = topicIndexer;
+			this.TopicRepository = topicRepository;
 			this.TopicParameterRepository = topicParameterRepository;
 			this.DialogTextRepository = dialogTextRepository;
 		}
@@ -33,20 +35,27 @@ namespace NumericOverflow.Bot.Services
 			}
 			else if (stepState.CurrentStatus == TopicStepState.Status.FindTopic)
 			{
-				// Tomar los topics según inputtext
-				var bestTopics = this.TopicIndexer.GetBestScoredTopicsFor(botRequest.InputText);
-				var bestTopicsCount = bestTopics.Count();
-				if (bestTopicsCount == 0)
+				if (botRequest.SelectedChoice != null)
 				{
-					this.GetErrorResponseFor(botRequest);
-				}
-				else if (bestTopicsCount == 1)
-				{
-					this.GetTopicSelectedResponseFor(botRequest, bestTopics.First().Item1);
+					var topic = this.TopicRepository.GetTopic(botRequest.SelectedChoice.Id);
+					this.GetTopicSelectedResponseFor(botRequest, topic);
 				}
 				else
 				{
-					this.GetTopicChoicesResponseFor(botRequest, bestTopics.Select(t => t.Item1));
+					var bestTopics = this.TopicIndexer.GetBestScoredTopicsFor(botRequest.InputText);
+					var bestTopicsCount = bestTopics.Count();
+					if (bestTopicsCount == 0)
+					{
+						this.GetErrorResponseFor(botRequest);
+					}
+					else if (bestTopicsCount == 1)
+					{
+						this.GetTopicSelectedResponseFor(botRequest, bestTopics.First().Item1);
+					}
+					else
+					{
+						this.GetTopicChoicesResponseFor(botRequest, bestTopics.Select(t => t.Item1));
+					}
 				}
 			}
 		}
@@ -107,7 +116,8 @@ namespace NumericOverflow.Bot.Services
 			currentState.CurrentStatus = TopicStepState.Status.FindTopicParameter;
 			currentState.TopicParameters = this.GetParametersFor(currentState.CurrentTopicId).ToList();
 			currentState.ResolvedParameters = new List<TopicParameter>();
-			botRequest.OutText = string.Format(this.DialogTextRepository.GetDialogTextFor("Topic Selected"), topic.Title);
+			// botRequest.OutText = string.Format(this.DialogTextRepository.GetDialogTextFor("Topic Selected"), topic.Title);
+			botRequest.OutText = this.DialogTextRepository.GetDialogTextFor("Topic Selected" + topic.Title);
 			this.ResolveParameters(botRequest);
 		}
 
@@ -154,10 +164,11 @@ namespace NumericOverflow.Bot.Services
 
 		public virtual void RedirectToParameter(TopicParameter parameterToResolve, BotRequest botRequest)
 		{
-			if (parameterToResolve.Type == typeof(DateTime))
+			if (parameterToResolve.TypeName == typeof(DateTime).Name)
 			{
 				var currentState = GetCurrentState(botRequest.DialogState);
 				this.OnRedirect(new DateParameterState() { Id = parameterToResolve.Id, Context = currentState.CurrentTopicInput }, botRequest);
+				botRequest.OutText = botRequest.OutText + ". Now give me a date";
 			}
 		}
 

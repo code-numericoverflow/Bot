@@ -9,6 +9,7 @@ using FullTextIndexer.Core.Indexes.TernarySearchTree;
 using FullTextIndexer.Core.IndexGenerators;
 using FullTextIndexer.Core.TokenBreaking;
 
+using NumericOverflow.Bot.Data;
 using NumericOverflow.Bot.Models;
 using NumericOverflow.Bot.Services;
 
@@ -17,19 +18,14 @@ namespace NumericOverflow.Bot.Indexers.Services
 	public class TextSearchTopicIndexer : ITopicIndexer
 	{
 
-		private IList<Topic> Topics { get; set; }
 		private IndexData<string> IndexData { get; set; }
+		private ITopicRepository TopicRepository { get; set; }
 
-		public TextSearchTopicIndexer()
+		public TextSearchTopicIndexer(ITopicRepository topicRepository)
 		{
-			this.Topics = new Topic[]
-			{
-				new  Topic("1", "HOLA AMIGOS", "Contenido para hola"),
-				new  Topic("2", "ADIOS AMIGOS", "Contenido para adios"),
-				new  Topic("3", "otro HOLA ", "otra cosa"),
-			};
+			this.TopicRepository = topicRepository;
 			var indexGenerator = GetTopicIndexGenerator();
-			this.IndexData = indexGenerator.Generate(new NonNullImmutableList<Topic>(this.Topics));
+			this.IndexData = indexGenerator.Generate(new NonNullImmutableList<Topic>(this.TopicRepository.GetTopics()));
 		}
 
 		public IEnumerable<Tuple<Topic, int>> GetBestScoredTopicsFor(string inputText)
@@ -44,7 +40,7 @@ namespace NumericOverflow.Bot.Indexers.Services
 							.Take(10)
 							.OrderByDescending(match => match.Weight);
 			var bestTopics = matches.Select(match => new Tuple<Topic, int>(
-				this.Topics.Where(t => t.Id == match.Key).First(),
+				this.TopicRepository.GetTopics().Where(t => t.Id == match.Key).First(),
 				(int)match.Weight)
 			);
 			return bestTopics;

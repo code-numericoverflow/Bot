@@ -25,7 +25,7 @@ namespace NumericOverflow.Bot.Tests.Services
 			this.DialogTextRepository = A.Fake<IDialogTextRepository>();
 			this.TopicParameterRepository = A.Fake<ITopicParameterRepository>();
 			this.DialogTextRepository = A.Fake<IDialogTextRepository>();
-			this.SUT = new TopicBot(this.TopicIndexer, this.TopicParameterRepository, this.DialogTextRepository);
+			this.SUT = new TopicBot(this.TopicIndexer, this.TopicParameterRepository, this.DialogTextRepository, null);
 		}
 
 		[TestMethod]

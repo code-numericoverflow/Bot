@@ -1,4 +1,4 @@
-@viewModel NumericOverflow.Bot.Sample.ViewModels.Chat, NumericOverflow.Bot.Sample
+﻿@viewModel NumericOverflow.Bot.Sample.ViewModels.Chat, NumericOverflow.Bot.Sample
 
 <!DOCTYPE html>
 
@@ -8,19 +8,67 @@
     <title></title>
 </head>
 <body>
+    <section class="avenue-messenger">
+        <div class="menu">
+            <div class="items">
+                <span>
+                    <a href="#" title="Minimize">&mdash;</a><br>
+                    <a href="#" title="End Chat">&#10005;</a>
+                </span>
+            </div>
+            <div class="button">...</div>
+        </div>
+        <div class="agent-face">
+            <div class="half">
+                <img class="agent circle" src="~/images/avatar.jpg" alt="Jesse Tino">
+            </div>
+        </div>
 
-	<dot:Repeater DataSource="{value: ChatItems}" WrapperTagName="ul">
-		<ItemTemplate>
-			<li>{{value: Text}}</li>
-		</ItemTemplate>
-	</dot:Repeater>
-	<dot:Repeater DataSource="{value: ChoiceItems}">
-		<ItemTemplate>
-			<dot:Button Click="{command: _root.ChoiceSelected(_this)}" Text="{value: Description}" />
-		</ItemTemplate>
-	</dot:Repeater>
-	<dot:TextBox Text="{value: InputText}" />
-	<dot:Button Click="{command: Submit()}" Text="Enviar" />
-
+        <div class="chat">
+            <div class="chat-title">
+                <h1>Bot</h1>
+                <h2>description</h2>
+            </div>
+            <div class="messages">
+                <div id="messagesDiv" class="messages-content mCustomScrollbar _mCS_1">
+					<dot:Repeater DataSource="{value: ChatItems}" >
+						<ItemTemplate>
+						    <div class="{value: IsBot ? 'message' : 'message message-personal'}">
+								<figure class="avatar" style="{value: IsBot ? 'visibility: visible' : 'visibility: hidden'}">
+									<img src="~/images/avatar.jpg" />
+								</figure>
+								{{value: Text}}
+							</div>
+						</ItemTemplate>
+					</dot:Repeater>
+					<div class="choices" style="{value: ChoiceItems != null ? 'visibility: visible' : 'visibility: hidden'}">
+						<figure class="avatar">
+							<img src="~/images/avatar.jpg" />
+						</figure>
+						<dot:Repeater DataSource="{value: ChoiceItems}">
+							<ItemTemplate>
+								<dot:LinkButton Click="{command: _root.ChoiceSelected(_this)}" Text="{value: Description}" /><br />
+							</ItemTemplate>
+						</dot:Repeater>
+					</div>
+				</div>
+            </div>
+            <div class="message-box">
+				<form>
+					<dot:TextBox Text="{value: InputText}" class="message-input" placeholder="Type message..." />
+					<dot:Button Click="{command: Submit()}" class="message-submit" Text="Enviar" IsSubmitButton="true" />
+				</form>
+            </div>
+        </div>
+    </section>
+	<dot:RequiredResource Name="chat" />
+	<dot:InlineScript>
+		dotvvm.events.afterPostback.subscribe(function(args) {
+    		var el1 = document.getElementById('messagesDiv');
+			//el1.scrollTop = el1.scrollHeight;
+    		el1.style.top = "-" + (el1.scrollHeight - el1.clientHeight) + "px";
+		});
+	</dot:InlineScript>
+	
 </body>
 </html>

@@ -6,9 +6,15 @@ namespace NumericOverflow.Bot.Models
 {
     public class TopicParameter
     {
-		public TopicParameter(Type type, string id, string title, string description, bool required, object @default, object value)
+		public TopicParameter()
 		{
-			this.Type = type;
+			this.Choices = new List<ChoiceItem>();
+		}
+
+		public TopicParameter(string typeName, string id, string title, string description, bool required, object @default, object value)
+			: this()
+		{
+			this.TypeName = typeName;
 			this.Id = id;
 			this.Title = title;
 			this.Description = description;
@@ -17,12 +23,14 @@ namespace NumericOverflow.Bot.Models
 			this.Value = value;
 		}
 
-		public Type Type { get; private set; }
-		public string Id { get; private set; }
-		public string Title { get; private set; }
-		public string Description { get; private set; }
-		public bool Required { get; private set; }
-		public object Default { get; private set; }
-		public object Value { get; private set; }
-    }
+		public string TopicId { get; set; }
+		public string Id { get; set; }
+		public string Title { get; set; }
+		public string Description { get; set; }
+		public bool Required { get; set; }
+		public object Default { get; set; }
+		public object Value { get; set; }
+		public string TypeName { get; set; }
+		public List<ChoiceItem> Choices { get; set; }
+	}
 }

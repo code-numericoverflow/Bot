@@ -30,7 +30,7 @@ namespace NumericOverflow.Bot.Tests.Services
 			A.CallTo(() => this.Resolver.Resolve(typeof(FirstMenu))).Returns(new FirstMenu());
 			A.CallTo(() => this.Resolver.Resolve(typeof(SecondMenu))).Returns(new SecondMenu());
 			A.CallTo(() => this.Resolver.Resolve(typeof(DateParameterBot))).Returns(new DateParameterBot());
-			A.CallTo(() => this.Resolver.Resolve(typeof(TopicBot))).Returns(new TopicBot(this.TopicIndexer, this.TopicParameterRepository, this.DialogTextRepository));
+			A.CallTo(() => this.Resolver.Resolve(typeof(TopicBot))).Returns(new TopicBot(this.TopicIndexer, this.TopicParameterRepository, this.DialogTextRepository, null));
 			this.RequestDispatcher = new RequestDispatcher(this.Resolver);
 		}
 

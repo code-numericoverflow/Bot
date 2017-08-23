@@ -20,7 +20,7 @@ namespace NumericOverflow.Bot.Tests.Helpers
 
 		public static TopicParameter GetSampleParameter(string id)
 		{
-			return new TopicParameter(typeof(DateTime), id, "", "", false, DateTime.Today, DateTime.Today);
+			return new TopicParameter(typeof(DateTime).Name, id, "", "", false, DateTime.Today, DateTime.Today);
 		}
 	}
 }

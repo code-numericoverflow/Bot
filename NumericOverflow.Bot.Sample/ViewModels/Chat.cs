@@ -20,7 +20,6 @@ namespace NumericOverflow.Bot.Sample.ViewModels
 		//[Bind(Direction.ServerToClient)]
 		public virtual List<ChoiceItem> ChoiceItems { get; set; }
 
-		private DialogState DialogState { get; set; }
 		private IRequestDispatcher RequestDispatcher { get; set; }
 		private IDialogStateRepository DialogStateRepository { get; set; }
 
@@ -35,14 +34,14 @@ namespace NumericOverflow.Bot.Sample.ViewModels
 			if (!Context.IsPostBack)
 			{
 				this.ChatItems = new List<ChatItem>();
-				this.DialogState = new DialogState();
+				var dialogState = new DialogState();
 				var topicStepState = new TopicStepState()
 				{
 					CurrentStatus = TopicStepState.Status.Initialized,
 				};
-				this.DialogState.AddStep(topicStepState);
+				dialogState.AddStep(topicStepState);
 				this.Id = Guid.NewGuid().ToString();
-				this.DialogStateRepository.Set(this.Id, this.DialogState);
+				this.DialogStateRepository.Set(this.Id, dialogState);
 				this.Submit();
 			}
 			return base.Init();
@@ -50,9 +49,9 @@ namespace NumericOverflow.Bot.Sample.ViewModels
 
 		public virtual void Submit()
 		{
-			this.DialogState = this.DialogStateRepository.Get(this.Id);
+			var DialogState = this.DialogStateRepository.Get(this.Id);
 			this.AddChatItem(this.InputText, false);
-			var botRequest = new BotRequest(this.DialogState)
+			var botRequest = new BotRequest(DialogState)
 			{
 				InputText = this.InputText,
 				OutText = "",
@@ -74,9 +73,9 @@ namespace NumericOverflow.Bot.Sample.ViewModels
 
 		public virtual void ChoiceSelected(ChoiceItem choiceItem)
 		{
-			this.DialogState = this.DialogStateRepository.Get(this.Id);
-			this.AddChatItem(this.InputText, false);
-			var botRequest = new BotRequest(this.DialogState)
+			var DialogState = this.DialogStateRepository.Get(this.Id);
+			this.AddChatItem(choiceItem.Description, false);
+			var botRequest = new BotRequest(DialogState)
 			{
 				InputText = choiceItem.Description,
 				OutText = "",

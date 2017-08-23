@@ -32,6 +32,7 @@ namespace NumericOverflow.Bot.Services
 			else
 			{
 				base.AddError(botRequest);
+				botRequest.OutText = "give me a date";
 			}
 		}
 
@@ -40,7 +41,8 @@ namespace NumericOverflow.Bot.Services
 			var currentState = botRequest.DialogState.CurrentState as DateParameterState;
 			currentState.Value = value;
 			currentState.ErrorCount = 0;
-			botRequest.Bag = new TopicParameter(typeof(DateTime), currentState.Id, "date", "date", false, value, value);
+			botRequest.Bag = new TopicParameter(typeof(DateTime).Name, currentState.Id, "date", "date", false, value, value);
+			botRequest.OutText = "Selected => " + value.ToString();
 			this.OnFinalize(botRequest);
 		}
 	}

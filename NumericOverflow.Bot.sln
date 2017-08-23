@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26724.1
+VisualStudioVersion = 15.0.26730.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericOverflow.Bot", "NumericOverflow.Bot\NumericOverflow.Bot.csproj", "{92495D3A-E497-4837-9E84-7E0A96EA2FEB}"
 EndProject
@@ -14,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericOverflow.Bot.Sample", "NumericOverflow.Bot.Sample\NumericOverflow.Bot.Sample.csproj", "{E3B39EEE-90BF-4EF7-8075-7ADC89B7F478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NumericOverflow.Bot.Indexers", "NumericOverflow.Bot.Indexers\NumericOverflow.Bot.Indexers.csproj", "{5000F90C-AA27-4F80-8F1A-ADB469C8A037}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NumericOverflow.Bot.Indexers", "NumericOverflow.Bot.Indexers\NumericOverflow.Bot.Indexers.csproj", "{5000F90C-AA27-4F80-8F1A-ADB469C8A037}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

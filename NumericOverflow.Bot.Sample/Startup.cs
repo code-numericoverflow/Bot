@@ -13,6 +13,7 @@ using FakeItEasy;
 
 using NumericOverflow.Bot.Data;
 using NumericOverflow.Bot.Services;
+using NumericOverflow.Bot.Indexers.Data;
 using NumericOverflow.Bot.Indexers.Services;
 using NumericOverflow.Bot.Sample.Data;
 using NumericOverflow.Bot.Sample.Services;
@@ -42,10 +43,11 @@ namespace NumericOverflow.Bot.Sample
             loggerFactory.AddConsole();
 
             var dotvvmConfiguration = app.UseDotVVM<DotvvmStartup>(env.ContentRootPath);
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(env.WebRootPath)
-            });
+			app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(env.WebRootPath)
+            //});
 		}
 
 		private void AddCustomServices(IServiceCollection services)
@@ -55,19 +57,17 @@ namespace NumericOverflow.Bot.Sample
 			services.AddTransient<IRequestDispatcher, RequestDispatcher>();
 			services.AddTransient<IResolver, Resolver>();
 			services.AddSingleton<ITopicIndexer, TextSearchTopicIndexer>();
+			var jsonTopicRepository = new JsonTopicRepository(@".\PSTopics.json");
+			services.AddSingleton<ITopicRepository>(jsonTopicRepository);
+			var jsonTopicParameterRepository = new JsonTopicParameterRepository(@".\PSTopicParameters.json");
+			services.AddSingleton<ITopicParameterRepository>(jsonTopicParameterRepository);
 			this.AddBotServices(services);
-			this.CreateFakeServices(services);
 		}
 
 		private void AddBotServices(IServiceCollection services)
 		{
 			services.AddTransient<DateParameterBot, DateParameterBot>();
 			services.AddTransient<TopicBot, TopicBot>();
-		}
-
-		private void CreateFakeServices(IServiceCollection services)
-		{
-			services.AddSingleton<ITopicParameterRepository>(A.Fake<ITopicParameterRepository>());
 		}
 	}
 }
