@@ -1,19 +1,24 @@
 ﻿# Before using this command you must load NumericOverflow.Bot.dll
 # Set $botDllLocation variable with the dll location
 [Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($botDllLocation)) | Out-Null
+# Get-Command Get-OperatingSystem | Get-PSTopicParameters | ConvertTo-Json -Depth 3 | Out-File -FilePath .\PSTopicParameters.json
 
 function Get-PSTopicParameters {
 	param( 
+        [Parameter(
+                Position=0, 
+                Mandatory=$true, 
+                ValueFromPipeline=$true)
+        ][System.Management.Automation.CommandInfo] $Command
 	)
-	(Get-Command Get-Date, Get-Clipboard, Set-Clipboard) | ForEach-Object {
-        $command = $_
-        $command.Name | Out-Host
+    process {
+        $Command.Name | Out-Host
         try {
-			$topicId = $_.Name
-            $parameters = $_.Parameters
+			$topicId = $Command.Name
+            $parameters = $Command.Parameters
 			$parameters.Keys | ForEach-Object {
                 $parameter = $parameters[$_]
-                $parameterHelp = Get-Help $command.Name -Parameter $parameter.Name
+                $parameterHelp = Get-Help $Command.Name -Parameter $parameter.Name
 				$topicParameter = New-Object -TypeName NumericOverflow.Bot.Models.TopicParameter
 				$topicParameter.TopicId = $topicId
 				$topicParameter.Id = $parameter.Name
@@ -26,7 +31,7 @@ function Get-PSTopicParameters {
                 }
                 $topicParameter.Value = $topicParameter.Default
                 $topicParameter.TypeName = $parameter.ParameterType.Name
-                $matchesCommand = "$command -$($parameter.Name) "
+                $matchesCommand = "$Command -$($parameter.Name) "
                 $matches = [System.Management.Automation.CommandCompletion]::CompleteInput($matchesCommand, $matchesCommand.Length, $null)
                 $matches.CompletionMatches | ForEach-Object {
                     $match = $_
@@ -41,5 +46,5 @@ function Get-PSTopicParameters {
 			}
         } catch {
         }
-    } | ConvertTo-Json -Depth 3 | Out-File -FilePath .\PSTopicParameters.json
+    }
 }

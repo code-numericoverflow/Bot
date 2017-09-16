@@ -6,6 +6,8 @@
     <Content Include="**\*.dothtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Remove="PSTopicParameters.json" />
+    <Content Remove="PSTopics.json" />
     <Content Remove="Views\Chat.dothtml" />
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +26,10 @@
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="DotVVM.CommandLine" Version="1.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PSTopicParameters.json" />
+    <None Include="PSTopics.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NumericOverflow.Bot.Indexers\NumericOverflow.Bot.Indexers.csproj" />

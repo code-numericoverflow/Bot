@@ -17,6 +17,7 @@ namespace NumericOverflow.Bot.Indexers.Services
 {
 	public class TextSearchTopicIndexer : ITopicIndexer
 	{
+		private int MinInputLength = 3;
 
 		private IndexData<string> IndexData { get; set; }
 		private ITopicRepository TopicRepository { get; set; }
@@ -30,20 +31,27 @@ namespace NumericOverflow.Bot.Indexers.Services
 
 		public IEnumerable<Tuple<Topic, int>> GetBestScoredTopicsFor(string inputText)
 		{
-			var matches = this.IndexData.GetPartialMatches<string>(
-							inputText,
-							GetTokenBreaker(),
-							(tokenMatches, allTokens) => (tokenMatches.Count < allTokens.Count - 1)
-								? 0
-								: tokenMatches.Sum(m => m.Weight)
-							)
-							.Take(10)
-							.OrderByDescending(match => match.Weight);
-			var bestTopics = matches.Select(match => new Tuple<Topic, int>(
-				this.TopicRepository.GetTopics().Where(t => t.Id == match.Key).First(),
-				(int)match.Weight)
-			);
-			return bestTopics;
+			if (inputText.Length > MinInputLength)
+			{
+				var matches = this.IndexData.GetPartialMatches<string>(
+								inputText,
+								GetTokenBreaker(),
+								(tokenMatches, allTokens) => (tokenMatches.Count < allTokens.Count - 1)
+									? 0
+									: tokenMatches.Sum(m => m.Weight)
+								)
+								.Take(10)
+								.OrderByDescending(match => match.Weight);
+				var bestTopics = matches.Select(match => new Tuple<Topic, int>(
+					this.TopicRepository.GetTopics().Where(t => t.Id == match.Key).First(),
+					(int)match.Weight)
+				);
+				return bestTopics;
+			}
+			else
+			{
+				return Enumerable.Empty< Tuple<Topic, int>>();
+			}
 		}
 
 		private static IndexGenerator<Topic, string> GetTopicIndexGenerator()
